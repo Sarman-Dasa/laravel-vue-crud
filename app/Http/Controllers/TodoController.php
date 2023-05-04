@@ -21,13 +21,15 @@ class TodoController extends Controller
     {
         $validation = validator($request->all(),[
             'title'         =>  'required|min:5|max:50',
-            'description'   =>  'required|min:1|max:100'
+            'description'   =>  'required|min:1|max:100',
+            'status'        =>  'required|in:done,undone',
+            'priority'      =>  'required|in:high,low,medium'
         ]);
 
         if($validation->fails())
             return $this->sendValidationError($validation);
 
-        $todo = Todo::create($request->only(['title','description']));
+        $todo = Todo::create($request->only(['title','description','status','priority']));
         return $this->sendSuccessResponse('Todo Data Added Successfully');
     }
 
@@ -42,7 +44,7 @@ class TodoController extends Controller
             return $this->sendValidationError($validation);
 
         $todo = Todo::findOrFail($id);
-        $todo->update($request->only(['title','description']));
+        $todo->update($request->only(['title','description','status','priority']));
         return $this->sendSuccessResponse('Todo Data Updated Successfully');
     }
 
@@ -64,15 +66,7 @@ class TodoController extends Controller
         $request->validate([
             'file' => 'required|image|mimes:png,jpg'
         ]);
-
-        // $validation = validator($request->all(),[
-        //     'file' => 'required|image|mimes:png,jpg'
-        // ]);
-        // if($validation->fails()) {
-        //     return error('validation Error',$validation->errors(),'validation');
-        // }
-
-
+        
         $fileName = $request->file->getClientOriginalName();
         $request->file->move(public_path('upload'), $fileName);
         return ok("File Uploaded Success Fully");
