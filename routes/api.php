@@ -22,4 +22,5 @@ Route::controller(TodoController::class)->prefix("todo")->group(function() {
     Route::put('update/{id}','update');
     Route::get('get/{id}','get');
     Route::delete('delete/{id}','destroy');
+    Route::post('/file-upload','fileUpload');
 });
