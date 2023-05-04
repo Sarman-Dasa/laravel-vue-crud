@@ -10,7 +10,7 @@ class TodoController extends Controller
 {
     use ResponseTraits;
 
-    public function list()
+    public function list(Request $request)
     {
         $query = Todo::query();
         $searching_Fields = ['title','description'];
@@ -57,5 +57,24 @@ class TodoController extends Controller
         $todo = Todo::findOrFail($id);
         $todo->delete();
         return $this->sendSuccessResponse('Todo data Deleted Successfully');
+    }
+
+    public function fileupload(Request $request) {
+
+        $request->validate([
+            'file' => 'required|image|mimes:png,jpg'
+        ]);
+
+        // $validation = validator($request->all(),[
+        //     'file' => 'required|image|mimes:png,jpg'
+        // ]);
+        // if($validation->fails()) {
+        //     return error('validation Error',$validation->errors(),'validation');
+        // }
+
+
+        $fileName = $request->file->getClientOriginalName();
+        $request->file->move(public_path('upload'), $fileName);
+        return ok("File Uploaded Success Fully");
     }
 }
