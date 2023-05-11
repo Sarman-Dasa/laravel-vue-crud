@@ -4,17 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Http\Traits\ResponseTraits;
 use App\Models\Todo;
+use App\Traits\ListingApiTrait;
 use Illuminate\Http\Request;
 
 class TodoController extends Controller
 {
-    use ResponseTraits;
+    use ListingApiTrait;
 
     public function list(Request $request)
     {
+        $this->ListingValidation();
         $query = Todo::query();
-        $searching_Fields = ['title','description'];
-        return $this->sendFilterListData($query,$searching_Fields);
+        $searchable_fields = ['title','description']; 
+        $data = $this->filterSearchPagination($query,$searchable_fields);
+
+        return ok('Todo list',[
+            'todos' =>  $data['query']->get(),
+            'count' =>  $data['count'],
+        ]);
     }
 
     public function create(Request $request)
@@ -22,15 +29,16 @@ class TodoController extends Controller
         $validation = validator($request->all(),[
             'title'         =>  'required|min:5|max:50',
             'description'   =>  'required|min:1|max:100',
-            'status'        =>  'required|in:done,undone',
-            'priority'      =>  'required|in:high,low,medium'
+            'status'        =>  'required|boolean',
+            'priority'      =>  'required|in:high,low,medium',
+            'due_date'      =>  'required|after_or_equal:'.now()
         ]);
 
         if($validation->fails())
-            return $this->sendValidationError($validation);
+            return error('validation error',$validation->errors(),'validation');
 
-        $todo = Todo::create($request->only(['title','description','status','priority']));
-        return $this->sendSuccessResponse('Todo Data Added Successfully');
+        $todo = Todo::create($request->only(['title','description','status','priority','due_date']));
+        return ok('Todo Data Added Successfully');
     }
 
     public function update(Request $request ,$id)
@@ -38,14 +46,17 @@ class TodoController extends Controller
         $validation = validator($request->all(),[
             'title'         =>  'required|min:5|max:50',
             'description'   =>  'required|min:1|max:100',
+            'status'        =>  'required|boolean',
+            'priority'      =>  'required|in:high,low,medium',
+            'due_date'      =>  'required|after_or_equal:'.now()
         ]);
 
         if($validation->fails())
-            return $this->sendValidationError($validation);
+            return error('validation error',$validation->errors(),'validation');
 
         $todo = Todo::findOrFail($id);
-        $todo->update($request->only(['title','description','status','priority']));
-        return $this->sendSuccessResponse('Todo Data Updated Successfully');
+        $todo->update($request->only(['title','description','status','priority','due_date']));
+        return ok('Todo Data Updated Successfully');
     }
 
     public function get($id)
@@ -58,7 +69,7 @@ class TodoController extends Controller
     {
         $todo = Todo::findOrFail($id);
         $todo->delete();
-        return $this->sendSuccessResponse('Todo data Deleted Successfully');
+        return ok('Todo data Deleted Successfully');
     }
 
     public function fileupload(Request $request) {
