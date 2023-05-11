@@ -21,4 +21,8 @@ class Todo extends Model
         'created_at',
         'updated_at',
     ];
+
+    protected $casts = [
+        'status' => 'boolean'
+    ];
 }
