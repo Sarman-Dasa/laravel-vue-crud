@@ -13,7 +13,8 @@ class Todo extends Model
         'title',
         'description',
         'priority',
-        'status'
+        'status',
+        'due_date',
     ];
 
     protected $hidden = [
