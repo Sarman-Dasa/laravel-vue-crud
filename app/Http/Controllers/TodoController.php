@@ -15,6 +15,7 @@ class TodoController extends Controller
     {
         $this->ListingValidation();
         $query = Todo::query();
+        $query->with('user');
         $searchable_fields = ['title','description']; 
         $data = $this->filterSearchPagination($query,$searchable_fields);
 
@@ -31,13 +32,14 @@ class TodoController extends Controller
             'description'   =>  'required|min:1|max:100',
             'status'        =>  'required|boolean',
             'priority'      =>  'required|in:high,low,medium',
-            'due_date'      =>  'required|after_or_equal:'.now()
+            'due_date'      =>  'required|after_or_equal:'.now(),
+            'user_id'       =>  'required|exists:users,id',
         ]);
 
         if($validation->fails())
             return error('validation error',$validation->errors(),'validation');
 
-        $todo = Todo::create($request->only(['title','description','status','priority','due_date']));
+        $todo = Todo::create($request->only(['title','description','status','priority','due_date','user_id']));
         return ok('Todo Data Added Successfully');
     }
 
@@ -48,21 +50,22 @@ class TodoController extends Controller
             'description'   =>  'required|min:1|max:100',
             'status'        =>  'required|boolean',
             'priority'      =>  'required|in:high,low,medium',
-            'due_date'      =>  'required|after_or_equal:'.now()
+            'due_date'      =>  'required|after_or_equal:'.now(),
+            'user_id'       =>  'required|exists:users,id',
         ]);
 
         if($validation->fails())
             return error('validation error',$validation->errors(),'validation');
 
         $todo = Todo::findOrFail($id);
-        $todo->update($request->only(['title','description','status','priority','due_date']));
+        $todo->update($request->only(['title','description','status','priority','due_date','user_id']));
         return ok('Todo Data Updated Successfully');
     }
 
     public function get($id)
     {
-        $todo = Todo::findOrFail($id);
-        return $this->sendSuccessResponse('todo',$todo);
+        $todo = Todo::with('user')->findOrFail($id);
+        return ok('todo',$todo);
     }
 
     public function destroy($id)
