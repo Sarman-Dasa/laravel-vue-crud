@@ -51,4 +51,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'is_active' => 'boolean'
     ];
+
+    public function todos() {
+        return $this->hasMany(Todo::class,'user_id','id');
+    }
 }
