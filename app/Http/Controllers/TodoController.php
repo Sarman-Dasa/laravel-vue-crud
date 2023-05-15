@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ExportTodo;
 use App\Http\Traits\ResponseTraits;
 use App\Models\Todo;
 use App\Traits\ListingApiTrait;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class TodoController extends Controller
 {
@@ -84,5 +87,11 @@ class TodoController extends Controller
         $fileName = $request->file->getClientOriginalName();
         $request->file->move(public_path('upload'), $fileName);
         return ok("File Uploaded Success Fully");
+    }
+
+    public function export(Request $request) {
+        //return ok("Data export",$request->all());
+
+       return Excel::download(new ExportTodo($request),'todo.csv');
     }
 }
