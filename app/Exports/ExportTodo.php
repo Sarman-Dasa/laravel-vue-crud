@@ -27,7 +27,23 @@ class ExportTodo implements FromQuery, WithHeadings ,WithMapping
     public function query()
     {
         $todo  = Todo::query();
-        $todo->whereBetween('due_date',[$this->request->start_date,$this->request->end_date]);
+        if($this->request->start_date && $this->request->end_date) {
+            $todo->whereBetween('due_date',[$this->request->start_date,$this->request->end_date]);
+        }
+        $searchable_fields = ['title','description','priority']; 
+        if($this->request->search) {
+            $search = $this->request->search;
+            $todo = $todo->where(function ($q) use ($search, $searchable_fields) {
+                /* adding searchable fields to orwhere condition */
+                foreach ($searchable_fields as $searchable_field) {
+                    $q->orWhere($searchable_field, 'like', '%'.$search.'%');
+                }
+                $q->orWhereHas('user',function($query) {
+                    $query->where('first_name','like',"%". $this->request->search."%");
+                });
+            });
+        }
+       
         return $todo;
     }
     // public function collection()
