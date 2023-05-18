@@ -26,6 +26,7 @@ Route::controller(TodoController::class)->prefix("todo")->group(function() {
     Route::delete('delete/{id}','destroy');
     Route::post('/file-upload','fileUpload');
     Route::post('/export-data','export');
+    Route::put('update-status/{id}','status');
 });
 
 
