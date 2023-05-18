@@ -94,4 +94,14 @@ class TodoController extends Controller
 
        return Excel::download(new ExportTodo($request),'todo.csv');
     }
+
+    public function status(Request $request, $id) {
+        $request->validate([
+            'status'        =>  'required|boolean',
+        ]);
+
+        Todo::findOrFail($id)->update($request->only('status'));
+
+        return ok('status updated successfully');
+    }
 }
