@@ -22,10 +22,21 @@ class TodoController extends Controller
         $searchable_fields = ['title','description']; 
         $data = $this->filterSearchPagination($query,$searchable_fields);
 
+        $priority_records = Todo::selectRaw('
+            COUNT(CASE WHEN priority = "high"  THEN 1 ELSE NULL END) as "high",
+            COUNT(CASE WHEN priority = "medium" THEN 1 ELSE NULL END) as "medium",
+            COUNT(CASE WHEN priority = "low" THEN 1 ELSE NULL END) as "low"
+        ')->first();
+
         return ok('Todo list',[
             'todos' =>  $data['query']->get(),
             'count' =>  $data['count'],
+            'priority' => $priority_records
         ]);
+
+          
+
+                return ok("todo",$priority_records);
     }
 
     public function create(Request $request)
