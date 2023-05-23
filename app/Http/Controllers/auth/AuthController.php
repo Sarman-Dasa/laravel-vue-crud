@@ -39,6 +39,7 @@ class AuthController extends Controller
             + [
                 'password'              =>  Hash::make($request->password),
                 'email_verify_token'    =>  Str::random(64),
+                'role_id'               =>  2,
             ]);
         //$user->notify(new WelcomeMail());
         $user->notify(new AccountVerifyMail($user));
@@ -83,7 +84,11 @@ class AuthController extends Controller
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'is_active' => true])) {
             $user   =   auth()->user();
             $token  =  $user->createToken('API TOKEN')->plainTextToken;
-            return ok('User Login Successfully', $token);
+            return ok('User Login Successfully', 
+            [
+                'user'  => $user,
+                'token' =>$token
+            ]);
         }
         return ok('Invalid Email & Password');
     }
