@@ -12,10 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         //DB::statement("ALTER TABLE `todos` CHANGE `status` `status` ENUM('Pending','Wait','Active', 'Completed') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Pending';");
-        Schema::table('todos', function (Blueprint $table) {
-           $table->dropColumn('status');
-            $table->boolean('status')->default(false);
-        });
+        //Schema::table('todos', function (Blueprint $table) {
+        //    $table->dropColumn('status');
+        //    $table->boolean('status')->default(false);
+       // });
+        DB::statement("ALTER TABLE todos CHANGE COLUMN status status BIT default FALSE;");
       
     }
 
@@ -25,7 +26,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('todos', function (Blueprint $table) {
-           
+            $table->dropColumn('status');
         });
     }
 };
