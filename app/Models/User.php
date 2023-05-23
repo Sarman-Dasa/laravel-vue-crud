@@ -26,6 +26,7 @@ class User extends Authenticatable
         'email_verify_token',
         'is_active',
         'email_verified_at',
+        'role_id',
     ];
 
     /**
@@ -39,7 +40,7 @@ class User extends Authenticatable
         'email_verify_token',
         'email_verified_at',
         'created_at',
-        'updated_at',
+        'updated_at'
     ];
 
     /**
@@ -54,5 +55,9 @@ class User extends Authenticatable
 
     public function todos() {
         return $this->hasMany(Todo::class,'user_id','id');
+    }
+
+    public function role() {
+        return $this->belongsTo(Role::class,'user_id');
     }
 }
