@@ -26,6 +26,7 @@ class UserFactory extends Factory
             'password' => Hash::make(12345678),
             'phone' =>  fake()->e164PhoneNumber(),
             'is_active' => true,
+            'role_id'   => 2,
         ];
     }
 
