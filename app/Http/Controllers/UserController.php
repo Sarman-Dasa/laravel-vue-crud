@@ -21,6 +21,7 @@ class UserController extends Controller
         $this->ListingValidation();
     
         $query = User::query();
+        $query->with('role:id,role');
         $searchable_fields = ['first_name' , 'last_name','email' ,'phone']; 
         $data = $this->filterSearchPagination($query,$searchable_fields);
 
@@ -104,5 +105,16 @@ class UserController extends Controller
         $user->delete();
 
         return ok("Account deleted successfully");
+    }
+
+    /**
+    * Update the specified user role from database
+    */
+
+    public function updateRole(Request $request, $id) {
+
+        User::findOrFail($id)->update($request->only('role_id'));
+
+        return ok('User role update successfully.');
     }
 }
