@@ -83,6 +83,7 @@ class AuthController extends Controller
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'is_active' => true])) {
             $user   =   auth()->user();
+            $user->role;
             $token  =  $user->createToken('API TOKEN')->plainTextToken;
             return ok('User Login Successfully', 
             [
