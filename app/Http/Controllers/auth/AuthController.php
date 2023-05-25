@@ -218,7 +218,12 @@ class AuthController extends Controller
             $token = $user->createToken('API TOKEN')->plainTextToken;
             Auth::login($user, true);
             $userOtp->delete();
-            return ok("Login successfully",$token);
+            $user->role;
+            return ok("Login successfully",
+            [
+                'token' => $token,
+                'user'  => $user
+            ]);
         }
         return $this->genrateOtp($user->phone);
     }
