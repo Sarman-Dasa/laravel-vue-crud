@@ -27,6 +27,7 @@ class User extends Authenticatable
         'is_active',
         'email_verified_at',
         'role_id',
+        'image'
     ];
 
     /**
