@@ -57,6 +57,7 @@ Route::middleware(['auth:sanctum','throttle:1|30'])->group(function () {
         Route::get('logout', 'logout');
         Route::post('change-password', 'changePassword');
         Route::put('update-role/{id}','updateRole');
+        Route::put('update-status/{id}','updateStatus');
     });
 });
 
