@@ -42,14 +42,26 @@ class UserController extends Controller
         $id = $user->id;
         $request->validate([
             'first_name'            =>  'required|string|min:3|max:30',
+            'file'                  =>  'nullable|sometimes|image|mimes:png,jpg,jpeg|max:2048',
             'last_name'             =>  'required|string|min:3|max:30',
             'email'                 =>  'required|email|unique:users,email,' . $id . ',id',
             'phone'                 =>  'required|numeric|unique:users,phone,' . $id . ',id',
-            'is_active'             =>  'required|boolean'
+            'is_active'             =>  'required',
         ]);
-
-        $user->update($request->only(['first_name', 'last_name', 'email', 'phone','is_active']));
-        return ok('user data updated successfuly');
+        if($request->hasFile('file')) {
+            $fileName = $request->first_name.time().".".$request->file->getClientOriginalExtension();
+            $request->file->move(public_path('storage'),$fileName);
+        }
+        else {
+            $fileName = $user->image;
+        }
+       // return ok("Req Data",$request->file('userImage'));
+        $user->update($request->only(['first_name', 'last_name', 'email', 'phone','is_active'])
+        +[
+             'image' => $fileName ?? null
+        ]);
+        $user->role;
+        return ok('user data updated successfuly',$user);
     }
 
     /**
