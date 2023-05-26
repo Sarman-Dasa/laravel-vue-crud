@@ -46,11 +46,13 @@ class UserController extends Controller
             'last_name'             =>  'required|string|min:3|max:30',
             'email'                 =>  'required|email|unique:users,email,' . $id . ',id',
             'phone'                 =>  'required|numeric|unique:users,phone,' . $id . ',id',
-            'is_active'             =>  'required',
+            //'is_active'             =>  'required',
         ]);
         if($request->hasFile('file')) {
             $fileName = $request->first_name.time().".".$request->file->getClientOriginalExtension();
             $request->file->move(public_path('storage'),$fileName);
+            $oldImage = $user->image;
+            unlink(public_path('storage/') .$oldImage);
         }
         else {
             $fileName = $user->image;
@@ -128,5 +130,15 @@ class UserController extends Controller
         User::findOrFail($id)->update($request->only('role_id'));
 
         return ok('User role update successfully.');
+    }
+
+    public function updateStatus(Request $request,$id) {
+
+        $request->validate([
+            'is_active' => 'required|boolean'
+        ]);
+        
+        User::findOrFail($id)->update($request->only('is_active'));
+        return ok('User status update successfully.');
     }
 }
