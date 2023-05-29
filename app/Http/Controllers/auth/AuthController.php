@@ -91,7 +91,7 @@ class AuthController extends Controller
                 'token' =>$token
             ]);
         }
-        return ok('Invalid Email & Password');
+        return error('Invalid Email & Password');
     }
 
 
