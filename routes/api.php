@@ -50,7 +50,7 @@ Route::controller(AuthController::class)->group(function () {
  */
 Route::middleware(['auth:sanctum','throttle:1|30'])->group(function () {
     Route::controller(UserController::class)->group(function () {
-        Route::post('list', 'list');
+        Route::post('list', 'list')->middleware('role:superAdmin');
         Route::put('update', 'update');
         Route::get('get', 'get');
         Route::delete('delete','destroy');
