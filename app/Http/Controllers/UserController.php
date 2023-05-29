@@ -85,6 +85,8 @@ class UserController extends Controller
     {
         $user = auth()->user()->tokens();
         $user->delete();
+
+        return ok("User logout successfully.");
     }
 
     /**
