@@ -61,9 +61,10 @@ class EmployeeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function get($id)
     {
-        //
+        $employee = Employee::findOrFail($id);
+        return ok('Employee data',$employee);
     }
 
     /**
@@ -71,14 +72,25 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'name'      =>  'required|string',
+            'email'     =>  'required|email|unique:employees,email,id'.$id,
+            'phone'     =>  'required|unique:employees,phone|regex:"[6-9]{1}[0-9]{9}"',
+            'salary'    =>  'required|numeric|min:10000|max:60000',
+            'joining_date' => 'required|before_or_equal:'.now(),
+        ]);
+
+        Employee::findOrFail($id)->update($request->only(['name', 'email', 'phone', 'salary', 'joining_date']));
+        return ok("Employee data updated successfully.");
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        Employee::findOrFail($id)->delete();
+
+        return ok("Record deleted data.");
     }
 }
