@@ -21,13 +21,14 @@ class EmployeeController extends Controller
 
         $searchable_fields =['name','email','joining_date'];
 
+        // add filter on employee joining date
         if($request->startDate && $request->endDate) {
             $query->whereBetween('joining_date',[$request->startDate,$request->endDate]);
         }
 
+        //add filter on employee salary
         if($request->minSalary && $request->maxSalary) {
            $query->whereBetween('salary',[$request->minSalary, $request->maxSalary]);
-            //return ok("ok",$query->get());
         }
 
         $employees =  $this->filterSearchPagination($query, $searchable_fields);
@@ -74,8 +75,8 @@ class EmployeeController extends Controller
     {
         $request->validate([
             'name'      =>  'required|string',
-            'email'     =>  'required|email|unique:employees,email,id'.$id,
-            'phone'     =>  'required|unique:employees,phone|regex:"[6-9]{1}[0-9]{9}"',
+            'email'     =>  'required|email|unique:employees,email,'.$id.',id',
+            'phone'     =>  'required|unique:employees,phone,'.$id.',id|regex:"[6-9]{1}[0-9]{9}"',
             'salary'    =>  'required|numeric|min:10000|max:60000',
             'joining_date' => 'required|before_or_equal:'.now(),
         ]);
@@ -91,6 +92,6 @@ class EmployeeController extends Controller
     {
         Employee::findOrFail($id)->delete();
 
-        return ok("Record deleted data.");
+        return ok("Record deleted successfully.");
     }
 }
