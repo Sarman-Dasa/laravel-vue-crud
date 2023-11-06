@@ -39,7 +39,7 @@ class AuthController extends Controller
             + [
                 'password'              =>  Hash::make($request->password),
                 'email_verify_token'    =>  Str::random(64),
-                'role_id'               =>  2,
+                'role_id'               =>  1,
             ]);
         //$user->notify(new WelcomeMail());
         $user->notify(new AccountVerifyMail($user));
