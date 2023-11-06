@@ -17,6 +17,9 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+
+     protected $appends = ['full_name'];
+
     protected $fillable = [
         'first_name',
         'last_name',
@@ -44,6 +47,11 @@ class User extends Authenticatable
         'updated_at'
     ];
 
+
+    public function getFullNameAttribute()
+    {
+        return ucfirst($this->first_name) . ' ' . ucfirst($this->last_name);
+    }
     /**
      * The attributes that should be cast.
      *
