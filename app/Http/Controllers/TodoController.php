@@ -8,6 +8,10 @@ use App\Models\Todo;
 use App\Traits\ListingApiTrait;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
+
+// Output the formatted date
+
 
 
 class TodoController extends Controller
@@ -48,10 +52,12 @@ class TodoController extends Controller
             'priority'      =>  'required|in:high,low,medium',
             'due_date'      =>  'required|after_or_equal:'.now(),
             'user_id'       =>  'required|exists:users,id',
+        ],[
+            'due_date'      => 'The due date field must be a date after or equal to '.Carbon::now()->format('d-m-y'),
         ]);
 
         if($validation->fails())
-            return error('validation error',$validation->errors(),'validation');
+            return error($validation->errors()->first(),$validation->errors(),'validation');
 
         $todo = Todo::create($request->only(['title','description','status','priority','due_date','user_id']));
         return ok('Todo Data Added Successfully');
